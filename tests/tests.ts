@@ -922,7 +922,8 @@ describe("Solvent Core", function () {
     // Setup: Stake NFT
     await stakeNft(provider, dropletMint, nftMint);
 
-    // Unstake NFt
+    // Unstake NFT twice
+    await unstakeNft(provider, dropletMint, nftMint);
     await unstakeNft(provider, dropletMint, nftMint);
 
     // Ensure solvent has the NFT now
