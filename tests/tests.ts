@@ -27,7 +27,9 @@ import {
   updateStakingParams,
   stakeNft,
   unstakeNft,
+  claimBalance,
 } from "../src/actions";
+import { SOLVENT_TREASURY } from "../src/constants";
 import {
   getFarmerAuthority,
   getMerkleProof,
@@ -72,6 +74,7 @@ describe("Solvent Core", function () {
     );
   });
 
+  // Buckets actions
   describe("can create bucket", () => {
     it("for Metaplex v1.1 collections", async () => {
       // Setup: Mint a collection NFT
@@ -242,6 +245,109 @@ describe("Solvent Core", function () {
     await redeemNft(provider, dropletMint, nftMint);
   });
 
+  describe("can swap one NFT for another", () => {
+    it("for Metaplex v1.1 collections", async () => {
+      // Setup: Mint a collection NFT and create bucket
+      const collectionCreator = await createKeypair(provider);
+      const collectionMint = await mintNft(
+        provider,
+        collectionCreator,
+        collectionCreator.publicKey
+      );
+      const [dropletMint] = await createBucket(provider, {
+        collectionMint,
+      });
+
+      // Setup: mint an NFT from that collection and deposit into bucket
+      const nftCreator1 = await createKeypair(provider);
+      const nftMint1 = await mintNft(
+        provider,
+        nftCreator1,
+        provider.wallet.publicKey,
+        collectionMint
+      );
+      await verifyCollection(
+        provider,
+        nftMint1,
+        collectionMint,
+        collectionCreator
+      );
+      await depositNft(provider, dropletMint, nftMint1);
+
+      // Setup: mint another NFT from that collection
+      const nftCreator2 = await createKeypair(provider);
+      const nftMint2 = await mintNft(
+        provider,
+        nftCreator2,
+        provider.wallet.publicKey,
+        collectionMint
+      );
+      await verifyCollection(
+        provider,
+        nftMint2,
+        collectionMint,
+        collectionCreator
+      );
+
+      await swapNft(provider, dropletMint, nftMint2, nftMint1);
+    });
+
+    it("for Metaplex v1.0 collections", async () => {
+      // Setup: Mint 2 NFTs
+      const nftCreator1 = await createKeypair(provider);
+      const nftMint1 = await mintNft(
+        provider,
+        nftCreator1,
+        provider.wallet.publicKey,
+        undefined,
+        true
+      );
+      const nftCreator2 = await createKeypair(provider);
+      const nftMint2 = await mintNft(
+        provider,
+        nftCreator2,
+        provider.wallet.publicKey,
+        undefined,
+        true
+      );
+
+      const mints = [...Array(5)].map(
+        () => new anchor.web3.Keypair().publicKey
+      );
+
+      // Setup: Create bucket and deposit an NFT
+      const { root: whitelistRoot, tree } = getMerkleTree([
+        ...mints,
+        nftMint1,
+        nftMint2,
+      ]);
+      const [dropletMint] = await createBucket(provider, {
+        verifiedCreators: [nftCreator1.publicKey, nftCreator2.publicKey],
+        symbol: "PCN",
+        whitelistRoot,
+      });
+      await depositNft(
+        provider,
+        dropletMint,
+        nftMint1,
+        undefined,
+        undefined,
+        getMerkleProof([...mints, nftMint1, nftMint2], nftMint1)
+      );
+
+      await swapNft(
+        provider,
+        dropletMint,
+        nftMint2,
+        nftMint1,
+        undefined,
+        undefined,
+        getMerkleProof([...mints, nftMint1, nftMint2], nftMint2)
+      );
+    });
+  });
+
+  // Lockers tests
   describe("can lock NFT into locker", () => {
     it("for Metaplex v1.1 collections", async () => {
       // Setup: Mint a collection NFT and create bucket
@@ -486,108 +592,6 @@ describe("Solvent Core", function () {
     await liquidateLocker(provider, dropletMint, nftMint2);
   });
 
-  describe("can swap one NFT for another", () => {
-    it("for Metaplex v1.1 collections", async () => {
-      // Setup: Mint a collection NFT and create bucket
-      const collectionCreator = await createKeypair(provider);
-      const collectionMint = await mintNft(
-        provider,
-        collectionCreator,
-        collectionCreator.publicKey
-      );
-      const [dropletMint] = await createBucket(provider, {
-        collectionMint,
-      });
-
-      // Setup: mint an NFT from that collection and deposit into bucket
-      const nftCreator1 = await createKeypair(provider);
-      const nftMint1 = await mintNft(
-        provider,
-        nftCreator1,
-        provider.wallet.publicKey,
-        collectionMint
-      );
-      await verifyCollection(
-        provider,
-        nftMint1,
-        collectionMint,
-        collectionCreator
-      );
-      await depositNft(provider, dropletMint, nftMint1);
-
-      // Setup: mint another NFT from that collection
-      const nftCreator2 = await createKeypair(provider);
-      const nftMint2 = await mintNft(
-        provider,
-        nftCreator2,
-        provider.wallet.publicKey,
-        collectionMint
-      );
-      await verifyCollection(
-        provider,
-        nftMint2,
-        collectionMint,
-        collectionCreator
-      );
-
-      await swapNft(provider, dropletMint, nftMint2, nftMint1);
-    });
-
-    it("for Metaplex v1.0 collections", async () => {
-      // Setup: Mint 2 NFTs
-      const nftCreator1 = await createKeypair(provider);
-      const nftMint1 = await mintNft(
-        provider,
-        nftCreator1,
-        provider.wallet.publicKey,
-        undefined,
-        true
-      );
-      const nftCreator2 = await createKeypair(provider);
-      const nftMint2 = await mintNft(
-        provider,
-        nftCreator2,
-        provider.wallet.publicKey,
-        undefined,
-        true
-      );
-
-      const mints = [...Array(5)].map(
-        () => new anchor.web3.Keypair().publicKey
-      );
-
-      // Setup: Create bucket and deposit an NFT
-      const { root: whitelistRoot, tree } = getMerkleTree([
-        ...mints,
-        nftMint1,
-        nftMint2,
-      ]);
-      const [dropletMint] = await createBucket(provider, {
-        verifiedCreators: [nftCreator1.publicKey, nftCreator2.publicKey],
-        symbol: "PCN",
-        whitelistRoot,
-      });
-      await depositNft(
-        provider,
-        dropletMint,
-        nftMint1,
-        undefined,
-        undefined,
-        getMerkleProof([...mints, nftMint1, nftMint2], nftMint1)
-      );
-
-      await swapNft(
-        provider,
-        dropletMint,
-        nftMint2,
-        nftMint1,
-        undefined,
-        undefined,
-        getMerkleProof([...mints, nftMint1, nftMint2], nftMint2)
-      );
-    });
-  });
-
   it("can update locking params", async () => {
     // Setup: Mint a collection NFT
     const collectionCreator = await createKeypair(provider);
@@ -638,6 +642,7 @@ describe("Solvent Core", function () {
     expect(bucketState.isLockingEnabled).to.be.true;
   });
 
+  // NFT Staking tests
   it("can update staking params", async () => {
     // Setup: Create farm
     const bankKeypair = new anchor.web3.Keypair();
@@ -936,5 +941,38 @@ describe("Solvent Core", function () {
     expect(
       (await getAccount(provider.connection, solventTokenAccount)).amount
     ).to.equal(1n);
+  });
+
+  // Misc tests
+  it("can claim balance from Solvent's PDAs", async () => {
+    // Setup: Airdrop 10 SOLs to the Solvent authority PDA
+    const solventAuthority = await getSolventAuthority();
+    await provider.connection.confirmTransaction(
+      await provider.connection.requestAirdrop(
+        solventAuthority,
+        10 * anchor.web3.LAMPORTS_PER_SOL
+      )
+    );
+    const minRentExcemptAmount =
+      await provider.connection.getMinimumBalanceForRentExemption(0);
+
+    const initialSolventAuthorityBalance = await provider.connection.getBalance(
+      solventAuthority
+    );
+    const initialSolventTreasuryBalance = await provider.connection.getBalance(
+      SOLVENT_TREASURY
+    );
+
+    // Claim balance
+    await claimBalance(provider);
+
+    // Check the SOL balances got transferred
+    expect(await provider.connection.getBalance(solventAuthority)).to.equal(
+      minRentExcemptAmount
+    );
+    expect(
+      (await provider.connection.getBalance(SOLVENT_TREASURY)) -
+        initialSolventTreasuryBalance
+    ).to.equal(initialSolventAuthorityBalance - minRentExcemptAmount);
   });
 });

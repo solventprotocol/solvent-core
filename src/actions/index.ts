@@ -23,3 +23,5 @@ export * from "./nft-staking/update-staking-params";
 export * from "./nft-staking/set-staking-enabled";
 export * from "./nft-staking/stake-nft";
 export * from "./nft-staking/unstake-nft";
+
+export * from "./misc/claim-balance";
