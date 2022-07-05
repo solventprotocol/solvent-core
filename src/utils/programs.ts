@@ -4,12 +4,12 @@ import {
   LOCKED_TOKEN_STAKING_PROGRAM_ID,
   SOLVENT_PROGRAM_ID,
 } from "../constants";
-import { Solvent } from "../types/solvent";
-import { StepStaking as FlexibleStaking } from "../types/flexible-staking";
-import { StepStaking as LockedStaking } from "../types/locked-staking";
-import * as solventIdl from "../idls/solvent.json";
-import * as lockedStakingIdl from "../idls/locked-staking.json";
-import * as flexibleStakingIdl from "../idls/flexible-staking.json";
+import { SolventProtocol } from "../types/solvent_protocol";
+import { StepStaking as FlexibleStaking } from "../types/flexible_staking";
+import { StepStaking as LockedStaking } from "../types/locked_staking";
+import * as solventIdl from "../idls/solvent_protocol.json";
+import * as lockedStakingIdl from "../idls/locked_staking.json";
+import * as flexibleStakingIdl from "../idls/flexible_staking.json";
 import * as gemFarmIdl from "../idls/gem_farm.json";
 import * as gemBankIdl from "../idls/gem_bank.json";
 import { GemBankClient, GemFarmClient } from "@gemworks/gem-farm-ts";
@@ -20,7 +20,7 @@ export const getSolvent = (provider: anchor.AnchorProvider) => {
     solventIdl,
     SOLVENT_PROGRAM_ID,
     provider
-  ) as anchor.Program<Solvent>;
+  ) as anchor.Program<SolventProtocol>;
 };
 
 export const getLockedSvtStaking = (provider: anchor.AnchorProvider) => {

@@ -1,0 +1,56 @@
+name: Publish
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  publish:
+    if: |
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '~publish') &&
+      contains(fromJson('["skulltech", "mdhrumil", "exogenesys"]'), github.event.comment.user.login)
+
+    name: Publish package to NPM
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get PR details
+        uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+      - name: Set commit status as pending
+        uses: myrotvorets/set-commit-status-action@master
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+
+      - name: Checkout program repo
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
+      - name: Install Node dependencies
+        run: yarn install
+      - name: Generate docs using TypeDoc
+        run: yarn typedoc
+      - name: Bump version and publish SDK to NPM
+        run: |
+          echo "_authToken=${NPM_TOKEN}" > ~/.npmrc
+          yarn p
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Get current package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "Update docs and publish to NPM @ ${{ steps.package-version.outputs.current-version}}"
+          default_author: github_actions
+
+      - name: Set final commit status
+        uses: myrotvorets/set-commit-status-action@master
+        if: always()
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}

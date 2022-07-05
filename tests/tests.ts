@@ -173,7 +173,7 @@ describe("Solvent Core", function () {
         provider,
         nftCreator,
         provider.wallet.publicKey,
-        null,
+        undefined,
         true
       );
 
@@ -197,8 +197,8 @@ describe("Solvent Core", function () {
           provider,
           dropletMint,
           nftMint,
-          null,
-          null,
+          undefined,
+          undefined,
           whitelistProof
         );
       } catch (error) {
@@ -310,7 +310,7 @@ describe("Solvent Core", function () {
         provider,
         nftCreator1,
         provider.wallet.publicKey,
-        null,
+        undefined,
         true
       );
       const nftCreator2 = await createKeypair(provider);
@@ -318,7 +318,7 @@ describe("Solvent Core", function () {
         provider,
         nftCreator2,
         provider.wallet.publicKey,
-        null,
+        undefined,
         true
       );
 
@@ -353,8 +353,8 @@ describe("Solvent Core", function () {
         provider,
         dropletMint,
         nftMint1,
-        null,
-        null,
+        undefined,
+        undefined,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint1)
       );
 
@@ -364,8 +364,8 @@ describe("Solvent Core", function () {
         dropletMint,
         nftMint2,
         100,
-        null,
-        null,
+        undefined,
+        undefined,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint2)
       );
     });
@@ -540,7 +540,7 @@ describe("Solvent Core", function () {
         provider,
         nftCreator1,
         provider.wallet.publicKey,
-        null,
+        undefined,
         true
       );
       const nftCreator2 = await createKeypair(provider);
@@ -548,7 +548,7 @@ describe("Solvent Core", function () {
         provider,
         nftCreator2,
         provider.wallet.publicKey,
-        null,
+        undefined,
         true
       );
 
@@ -571,8 +571,8 @@ describe("Solvent Core", function () {
         provider,
         dropletMint,
         nftMint1,
-        null,
-        null,
+        undefined,
+        undefined,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint1)
       );
 
@@ -581,8 +581,8 @@ describe("Solvent Core", function () {
         dropletMint,
         nftMint2,
         nftMint1,
-        null,
-        null,
+        undefined,
+        undefined,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint2)
       );
     });
@@ -698,16 +698,16 @@ describe("Solvent Core", function () {
 
     // Ensure staking params were updated
     const bucketState = await getBucket(provider.connection, dropletMint);
-    expect(bucketState.stakingParams.gembankProgram.toBase58()).to.equal(
+    expect(bucketState.stakingParams?.gembankProgram.toBase58()).to.equal(
       GEM_BANK_PROG_ID.toBase58()
     );
-    expect(bucketState.stakingParams.gemfarmProgram.toBase58()).to.equal(
+    expect(bucketState.stakingParams?.gemfarmProgram.toBase58()).to.equal(
       GEM_FARM_PROG_ID.toBase58()
     );
-    expect(bucketState.stakingParams.gemworksFarm.toBase58()).to.equal(
+    expect(bucketState.stakingParams?.gemworksFarm.toBase58()).to.equal(
       farmKeypair.publicKey.toBase58()
     );
-    expect(bucketState.stakingParams.gemworksFeeAccount.toBase58()).to.equal(
+    expect(bucketState.stakingParams?.gemworksFeeAccount.toBase58()).to.equal(
       feeAccount.toBase58()
     );
   });
@@ -827,13 +827,12 @@ describe("Solvent Core", function () {
     const bucketState = await getBucket(provider.connection, dropletMint);
 
     // Assert farmer account has correct info
-    const [farmerAddress] = await findFarmerPDA(
-      bucketState.stakingParams.gemworksFarm,
-      farmerAuthority
-    );
+    const gemworksFarm = bucketState.stakingParams?.gemworksFarm;
+    assert(gemworksFarm !== undefined);
+    const [farmerAddress] = await findFarmerPDA(gemworksFarm, farmerAuthority);
     const farmer = await gemFarm.fetchFarmerAcc(farmerAddress);
     expect(farmer.farm.toBase58()).to.equal(
-      bucketState.stakingParams.gemworksFarm.toBase58()
+      bucketState.stakingParams?.gemworksFarm.toBase58()
     );
     expect(farmer.identity.toBase58()).to.equal(farmerAuthority.toBase58());
     assert("staked" in farmer.state);

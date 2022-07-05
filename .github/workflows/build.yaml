@@ -1,0 +1,50 @@
+name: Build
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  build:
+    if: |
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '~build') &&
+      contains(fromJson('["skulltech", "mdhrumil", "exogenesys"]'), github.event.comment.user.login)
+
+    name: Format code and run tests
+    runs-on: ubuntu-latest
+    container: projectserum/build:v0.24.2
+
+    steps:
+      - name: Get PR details
+        uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+      - name: Set commit status as pending
+        uses: myrotvorets/set-commit-status-action@master
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: pending
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
+      - name: Set up Node
+        uses: actions/setup-node@v3
+      - name: Install Node dependencies
+        run: yarn install
+      - name: Create a new Solana keypair
+        run: solana-keygen new -s --no-bip39-passphrase
+      - name: Run tests
+        run: |
+          yarn test:validator &
+          sleep 30
+          yarn test
+
+      - name: Set final commit status
+        uses: myrotvorets/set-commit-status-action@master
+        if: always()
+        with:
+          sha: ${{ steps.comment-branch.outputs.head_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
