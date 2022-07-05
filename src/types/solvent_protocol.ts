@@ -1,6 +1,6 @@
-export type Solvent = {
-  "version": "0.1.0",
-  "name": "solvent",
+export type SolventProtocol = {
+  "version": "1.0.0",
+  "name": "solvent_protocol",
   "instructions": [
     {
       "name": "createBucket",
@@ -1932,6 +1932,51 @@ export type Solvent = {
           }
         }
       ]
+    },
+    {
+      "name": "claimBalance",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "solventTreasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "solventAuthority",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "authority-seed"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -2154,6 +2199,16 @@ export type Solvent = {
     }
   ],
   "events": [
+    {
+      "name": "ClaimBalanceEvent",
+      "fields": [
+        {
+          "name": "signer",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
     {
       "name": "CreateBucketEvent",
       "fields": [
@@ -2609,13 +2664,18 @@ export type Solvent = {
       "code": 6015,
       "name": "StakingDisabled",
       "msg": "Auto-staking feature is disabled on this collection."
+    },
+    {
+      "code": 6016,
+      "name": "StakingCooldownPending",
+      "msg": "The staked NFT is in cooldown period, please wait and try again."
     }
   ]
 };
 
-export const IDL: Solvent = {
-  "version": "0.1.0",
-  "name": "solvent",
+export const IDL: SolventProtocol = {
+  "version": "1.0.0",
+  "name": "solvent_protocol",
   "instructions": [
     {
       "name": "createBucket",
@@ -4547,6 +4607,51 @@ export const IDL: Solvent = {
           }
         }
       ]
+    },
+    {
+      "name": "claimBalance",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "solventTreasury",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "solventAuthority",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "authority-seed"
+              }
+            ]
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -4769,6 +4874,16 @@ export const IDL: Solvent = {
     }
   ],
   "events": [
+    {
+      "name": "ClaimBalanceEvent",
+      "fields": [
+        {
+          "name": "signer",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
     {
       "name": "CreateBucketEvent",
       "fields": [
@@ -5224,6 +5339,11 @@ export const IDL: Solvent = {
       "code": 6015,
       "name": "StakingDisabled",
       "msg": "Auto-staking feature is disabled on this collection."
+    },
+    {
+      "code": 6016,
+      "name": "StakingCooldownPending",
+      "msg": "The staked NFT is in cooldown period, please wait and try again."
     }
   ]
 };

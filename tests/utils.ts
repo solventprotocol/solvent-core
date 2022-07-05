@@ -7,12 +7,6 @@ import {
 import { getTokenMetadata } from "../src/utils";
 import { readFileSync } from "fs";
 import { resolve } from "path";
-import {
-  createCreateMetadataAccountV2Instruction,
-  createCreateMetadataAccountInstruction,
-  createCreateMasterEditionV3Instruction,
-  createVerifyCollectionInstruction,
-} from "./token-metadata";
 import * as gemFarmIdl from "../src/idls/gem_farm.json";
 import * as gemBankIdl from "../src/idls/gem_bank.json";
 import {
@@ -21,7 +15,13 @@ import {
   GEM_BANK_PROG_ID,
   GEM_FARM_PROG_ID,
 } from "@gemworks/gem-farm-ts";
-import { PROGRAM_ID as METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
+import {
+  createCreateMetadataAccountV2Instruction,
+  createCreateMetadataAccountInstruction,
+  createCreateMasterEditionV3Instruction,
+  createVerifyCollectionInstruction,
+  PROGRAM_ID as METADATA_PROGRAM_ID,
+} from "@metaplex-foundation/mpl-token-metadata";
 
 export const createKeypair = async (provider: anchor.Provider) => {
   const keypair = new anchor.web3.Keypair();
@@ -163,6 +163,7 @@ export const mintNft = async (
     )
   );
 
+  // @ts-ignore
   await provider.sendAndConfirm(transaction, [creator]);
 
   return mint;
