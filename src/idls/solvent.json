@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "1.0.0",
   "name": "solvent",
   "instructions": [
     {
@@ -2670,5 +2670,8 @@
       "name": "StakingCooldownPending",
       "msg": "The staked NFT is in cooldown period, please wait and try again."
     }
-  ]
+  ],
+  "metadata": {
+    "address": "SVTy4zMgDPExf1RaJdoCo5HvuyxrxdRsqF1uf2Rcd7J"
+  }
 }
