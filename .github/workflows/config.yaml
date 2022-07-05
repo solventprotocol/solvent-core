@@ -1,7 +1,7 @@
 name: Build
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
     types: [opened, reopened, updated, synchronize]
 
 jobs:
