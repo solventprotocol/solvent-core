@@ -8,7 +8,7 @@
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --fix --fix-type suggestion --ext .ts .",
     "build": "tsc -p .",
-    "p": "yarn build && npm version patch --no-git-tag-version && npm publish",
+    "p": "yarn build && npm version patch --no-git-tag-version && npm publish --access public",
     "test:validator": "solana-test-validator -q --reset --bpf-program SVTy4zMgDPExf1RaJdoCo5HvuyxrxdRsqF1uf2Rcd7J ./tests/genesis-programs/solvent_protocol.so --bpf-program metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s ./tests/genesis-programs/mpl_token_metadata.so --bpf-program bankHHdqMuaaST4qQk6mkzxGeKPHWmqdgor6Gs8r88m ./tests/genesis-programs/gem_bank.so --bpf-program farmL4xeBFVXJqtfxCzU9b28QACM7E2W2ctT6epAjvE ./tests/genesis-programs/gem_farm.so",
     "test": "ANCHOR_WALLET=~/.config/solana/id.json ts-mocha --parallel -t 1000000 tests/**/*.ts",
     "update-contract": "./scripts/update-contract.sh"
