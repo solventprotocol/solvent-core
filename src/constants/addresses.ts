@@ -9,8 +9,11 @@ export const FLEXIBLE_TOKEN_STAKING_PROGRAM_ID = new anchor.web3.PublicKey(
 export const LOCKED_TOKEN_STAKING_PROGRAM_ID = new anchor.web3.PublicKey(
   "AbntkGcaYc5RuAzyomxY5sEmvkpd87DeDKh2FVuQm4pU"
 );
-export const SOLVENT_TREASURY = new anchor.web3.PublicKey(
+export const SOLVENT_LOCKERS_TREASURY = new anchor.web3.PublicKey(
   "HkjFiwUW7qnREVm2PxBg8LUrCvjExrJjyYY51wsZTUK8"
+);
+export const SOLVENT_CORE_TREASURY = new anchor.web3.PublicKey(
+  "45nueWN9Qwn5vDBmJGBLEsYvaJG6vrNmNdCyrntXDk2K"
 );
 export const SVT_MINT = new anchor.web3.PublicKey(
   "svtMpL5eQzdmB3uqK9NXaQkq8prGZoKQFNVJghdWCkV"

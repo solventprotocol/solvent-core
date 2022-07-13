@@ -24,14 +24,14 @@ export const stakeNft = async (
   const transaction = new anchor.web3.Transaction();
 
   const solventAuthority = await getSolventAuthority();
-  const solventTokenAccount = await getAssociatedTokenAddress(
+  const solventNftTokenAccount = await getAssociatedTokenAddress(
     nftMint,
     solventAuthority,
     true
   );
 
   const farmerAuthority = await getFarmerAuthority(nftMint);
-  const farmerTokenAccount = await getAssociatedTokenAddress(
+  const farmerNftTokenAccount = await getAssociatedTokenAddress(
     nftMint,
     farmerAuthority,
     true
@@ -56,8 +56,8 @@ export const stakeNft = async (
         gemworksFarm,
         gemworksFeeAccount,
         nftMint,
-        solventTokenAccount,
-        farmerTokenAccount,
+        solventNftTokenAccount,
+        farmerNftTokenAccount,
       })
       .instruction()
   );

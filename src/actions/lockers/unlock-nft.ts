@@ -4,7 +4,7 @@ import {
   getAccount,
   getAssociatedTokenAddress,
 } from "@solana/spl-token-latest";
-import { SOLVENT_TREASURY } from "../../constants";
+import { SOLVENT_LOCKERS_TREASURY } from "../../constants";
 import { getSolvent, getSolventAuthority } from "../../utils";
 
 /**
@@ -27,15 +27,15 @@ export const unlockNft = async (
   const transaction = new anchor.web3.Transaction();
 
   const solventAuthority = await getSolventAuthority();
-  const solventTokenAccount = await getAssociatedTokenAddress(
+  const solventNftTokenAccount = await getAssociatedTokenAddress(
     nftMint,
     solventAuthority,
     true
   );
 
-  const solventTreasuryDropletAccount = await getAssociatedTokenAddress(
+  const solventTreasuryDropletTokenAccount = await getAssociatedTokenAddress(
     dropletMint,
-    SOLVENT_TREASURY
+    SOLVENT_LOCKERS_TREASURY
   );
 
   // Use wallet's ATA as the NFT token account if not passed as argument
@@ -75,11 +75,11 @@ export const unlockNft = async (
         signer: provider.wallet.publicKey,
         dropletMint,
         nftMint,
-        signerDropletAccount: dropletTokenAccount,
-        solventTokenAccount,
-        destinationTokenAccount: nftTokenAccount,
-        solventTreasury: SOLVENT_TREASURY,
-        solventTreasuryDropletAccount,
+        signerDropletTokenAccount: dropletTokenAccount,
+        solventNftTokenAccount,
+        destinationNftTokenAccount: nftTokenAccount,
+        solventTreasury: SOLVENT_LOCKERS_TREASURY,
+        solventTreasuryDropletTokenAccount,
       })
       .instruction()
   );

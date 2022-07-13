@@ -4,6 +4,7 @@ import {
   getAccount,
   getAssociatedTokenAddress,
 } from "@solana/spl-token-latest";
+import { SOLVENT_CORE_TREASURY } from "../../constants";
 import { getSolventAuthority, getSolvent } from "../../utils";
 
 /**
@@ -55,23 +56,30 @@ export const redeemNft = async (
   }
 
   const solventAuthority = await getSolventAuthority();
-  const solventTokenAccount = await getAssociatedTokenAddress(
+  const solventNftTokenAccount = await getAssociatedTokenAddress(
     nftMint,
     solventAuthority,
     true
   );
 
+  const solventTreasuryDropletTokenAccount = await getAssociatedTokenAddress(
+    dropletMint,
+    SOLVENT_CORE_TREASURY
+  );
+
   // Redeem NFT and burn droplets in the process
   transaction.add(
     await solvent.methods
-      .redeemNft()
+      .redeemNft(false)
       .accounts({
         signer: provider.wallet.publicKey,
         dropletMint,
         nftMint,
-        solventTokenAccount,
-        destinationTokenAccount: nftTokenAccount,
-        signerDropletAccount: dropletTokenAccount,
+        solventNftTokenAccount,
+        destinationNftTokenAccount: nftTokenAccount,
+        signerDropletTokenAccount: dropletTokenAccount,
+        solventTreasury: SOLVENT_CORE_TREASURY,
+        solventTreasuryDropletTokenAccount,
       })
       .instruction()
   );

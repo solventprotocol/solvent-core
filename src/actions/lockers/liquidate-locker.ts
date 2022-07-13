@@ -4,7 +4,7 @@ import {
   getAccount,
   getAssociatedTokenAddress,
 } from "@solana/spl-token-latest";
-import { SOLVENT_TREASURY } from "../../constants";
+import { SOLVENT_LOCKERS_TREASURY } from "../../constants";
 import { getSolventAuthority, getSolvent } from "../../utils";
 
 /**
@@ -24,13 +24,13 @@ export const liquidateLocker = async (
   const solvent = getSolvent(provider);
   const transaction = new anchor.web3.Transaction();
 
-  const solventTreasuryDropletAccount = await getAssociatedTokenAddress(
+  const solventTreasuryDropletTokenAccount = await getAssociatedTokenAddress(
     dropletMint,
-    SOLVENT_TREASURY
+    SOLVENT_LOCKERS_TREASURY
   );
 
   const solventAuthority = await getSolventAuthority();
-  const solventTokenAccount = await getAssociatedTokenAddress(
+  const solventNftTokenAccount = await getAssociatedTokenAddress(
     nftMint,
     solventAuthority,
     true
@@ -65,10 +65,10 @@ export const liquidateLocker = async (
         signer: provider.wallet.publicKey,
         dropletMint,
         nftMint,
-        solventTokenAccount,
-        solventTreasury: SOLVENT_TREASURY,
-        solventTreasuryDropletAccount,
-        signerDropletAccount: dropletTokenAccount,
+        solventNftTokenAccount,
+        solventTreasury: SOLVENT_LOCKERS_TREASURY,
+        solventTreasuryDropletTokenAccount,
+        signerDropletTokenAccount: dropletTokenAccount,
       })
       .instruction()
   );

@@ -143,6 +143,31 @@ export type SolventProtocol = {
           }
         },
         {
+          "name": "swapState",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "droplet_mint"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "signer"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "swap-seed"
+              }
+            ]
+          }
+        },
+        {
           "name": "dropletMint",
           "isMut": true,
           "isSigner": false
@@ -153,22 +178,22 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "metadata",
+          "name": "nftMetadata",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -194,6 +219,10 @@ export type SolventProtocol = {
         }
       ],
       "args": [
+        {
+          "name": "swap",
+          "type": "bool"
+        },
         {
           "name": "whitelistProof",
           "type": {
@@ -278,6 +307,31 @@ export type SolventProtocol = {
           }
         },
         {
+          "name": "swapState",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "droplet_mint"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "signer"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "swap-seed"
+              }
+            ]
+          }
+        },
+        {
           "name": "dropletMint",
           "isMut": true,
           "isSigner": false
@@ -288,17 +342,27 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "destinationTokenAccount",
+          "name": "destinationNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "solventTreasury",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "solventTreasuryDropletTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signerDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -306,9 +370,29 @@ export type SolventProtocol = {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "swap",
+          "type": "bool"
+        }
+      ]
     },
     {
       "name": "lockNft",
@@ -384,17 +468,17 @@ export type SolventProtocol = {
           }
         },
         {
-          "name": "metadata",
+          "name": "nftMetadata",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -404,7 +488,7 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -526,17 +610,17 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "destinationTokenAccount",
+          "name": "destinationNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -546,7 +630,7 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTreasuryDropletAccount",
+          "name": "solventTreasuryDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -688,17 +772,17 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTreasuryDropletAccount",
+          "name": "solventTreasuryDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": false,
           "isSigner": false
         },
@@ -990,12 +1074,12 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "farmerTokenAccount",
+          "name": "farmerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1306,7 +1390,7 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1761,7 +1845,7 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "signerDropletAccountOld",
+          "name": "signerDropletTokenAccountOld",
           "isMut": true,
           "isSigner": false
         },
@@ -1771,12 +1855,12 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "signerDropletAccountNew",
+          "name": "signerDropletTokenAccountNew",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "adminDropletAccount",
+          "name": "adminDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1882,17 +1966,17 @@ export type SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "metadata",
+          "name": "nftMetadata",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -2113,6 +2197,30 @@ export type SolventProtocol = {
           }
         ]
       }
+    },
+    {
+      "name": "swapState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "dropletMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "signer",
+            "type": "publicKey"
+          },
+          {
+            "name": "flag",
+            "type": "bool"
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -2243,12 +2351,12 @@ export type SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2273,12 +2381,7 @@ export type SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerDropletAccount",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "solventTreasury",
+          "name": "signerDropletTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2303,12 +2406,12 @@ export type SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2328,12 +2431,12 @@ export type SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerDropletAccountOld",
+          "name": "signerDropletTokenAccountOld",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "signerDropletAccountNew",
+          "name": "signerDropletTokenAccountNew",
           "type": "publicKey",
           "index": false
         }
@@ -2373,12 +2476,12 @@ export type SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationTokenAccount",
+          "name": "destinationNftTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2483,17 +2586,12 @@ export type SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationTokenAccount",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "solventTreasury",
+          "name": "destinationNftTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2669,6 +2767,11 @@ export type SolventProtocol = {
       "code": 6016,
       "name": "StakingCooldownPending",
       "msg": "The staked NFT is in cooldown period, please wait and try again."
+    },
+    {
+      "code": 6017,
+      "name": "SwapNotAllowed",
+      "msg": "You cannot redeem NFT as part of a swap because you haven't deposited one yet."
     }
   ]
 };
@@ -2818,6 +2921,31 @@ export const IDL: SolventProtocol = {
           }
         },
         {
+          "name": "swapState",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "droplet_mint"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "signer"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "swap-seed"
+              }
+            ]
+          }
+        },
+        {
           "name": "dropletMint",
           "isMut": true,
           "isSigner": false
@@ -2828,22 +2956,22 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "metadata",
+          "name": "nftMetadata",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -2869,6 +2997,10 @@ export const IDL: SolventProtocol = {
         }
       ],
       "args": [
+        {
+          "name": "swap",
+          "type": "bool"
+        },
         {
           "name": "whitelistProof",
           "type": {
@@ -2953,6 +3085,31 @@ export const IDL: SolventProtocol = {
           }
         },
         {
+          "name": "swapState",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "droplet_mint"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "signer"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "swap-seed"
+              }
+            ]
+          }
+        },
+        {
           "name": "dropletMint",
           "isMut": true,
           "isSigner": false
@@ -2963,17 +3120,27 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "destinationTokenAccount",
+          "name": "destinationNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "solventTreasury",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "solventTreasuryDropletTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signerDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -2981,9 +3148,29 @@ export const IDL: SolventProtocol = {
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "swap",
+          "type": "bool"
+        }
+      ]
     },
     {
       "name": "lockNft",
@@ -3059,17 +3246,17 @@ export const IDL: SolventProtocol = {
           }
         },
         {
-          "name": "metadata",
+          "name": "nftMetadata",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -3079,7 +3266,7 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -3201,17 +3388,17 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "destinationTokenAccount",
+          "name": "destinationNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -3221,7 +3408,7 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTreasuryDropletAccount",
+          "name": "solventTreasuryDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -3363,17 +3550,17 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTreasuryDropletAccount",
+          "name": "solventTreasuryDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": false,
           "isSigner": false
         },
@@ -3665,12 +3852,12 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "farmerTokenAccount",
+          "name": "farmerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -3981,7 +4168,7 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -4436,7 +4623,7 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "signerDropletAccountOld",
+          "name": "signerDropletTokenAccountOld",
           "isMut": true,
           "isSigner": false
         },
@@ -4446,12 +4633,12 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "signerDropletAccountNew",
+          "name": "signerDropletTokenAccountNew",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "adminDropletAccount",
+          "name": "adminDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -4557,17 +4744,17 @@ export const IDL: SolventProtocol = {
           "isSigner": false
         },
         {
-          "name": "metadata",
+          "name": "nftMetadata",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -4788,6 +4975,30 @@ export const IDL: SolventProtocol = {
           }
         ]
       }
+    },
+    {
+      "name": "swapState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "dropletMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "signer",
+            "type": "publicKey"
+          },
+          {
+            "name": "flag",
+            "type": "bool"
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -4918,12 +5129,12 @@ export const IDL: SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -4948,12 +5159,7 @@ export const IDL: SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerDropletAccount",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "solventTreasury",
+          "name": "signerDropletTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -4978,12 +5184,12 @@ export const IDL: SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -5003,12 +5209,12 @@ export const IDL: SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerDropletAccountOld",
+          "name": "signerDropletTokenAccountOld",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "signerDropletAccountNew",
+          "name": "signerDropletTokenAccountNew",
           "type": "publicKey",
           "index": false
         }
@@ -5048,12 +5254,12 @@ export const IDL: SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationTokenAccount",
+          "name": "destinationNftTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -5158,17 +5364,12 @@ export const IDL: SolventProtocol = {
           "index": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationTokenAccount",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "solventTreasury",
+          "name": "destinationNftTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -5344,6 +5545,11 @@ export const IDL: SolventProtocol = {
       "code": 6016,
       "name": "StakingCooldownPending",
       "msg": "The staked NFT is in cooldown period, please wait and try again."
+    },
+    {
+      "code": 6017,
+      "name": "SwapNotAllowed",
+      "msg": "You cannot redeem NFT as part of a swap because you haven't deposited one yet."
     }
   ]
 };
