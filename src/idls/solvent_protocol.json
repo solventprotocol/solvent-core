@@ -143,6 +143,31 @@
           }
         },
         {
+          "name": "swapState",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "droplet_mint"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "signer"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "swap-seed"
+              }
+            ]
+          }
+        },
+        {
           "name": "dropletMint",
           "isMut": true,
           "isSigner": false
@@ -153,22 +178,22 @@
           "isSigner": false
         },
         {
-          "name": "metadata",
+          "name": "nftMetadata",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -194,6 +219,10 @@
         }
       ],
       "args": [
+        {
+          "name": "swap",
+          "type": "bool"
+        },
         {
           "name": "whitelistProof",
           "type": {
@@ -278,6 +307,31 @@
           }
         },
         {
+          "name": "swapState",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "droplet_mint"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "signer"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "swap-seed"
+              }
+            ]
+          }
+        },
+        {
           "name": "dropletMint",
           "isMut": true,
           "isSigner": false
@@ -288,17 +342,27 @@
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "destinationTokenAccount",
+          "name": "destinationNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "solventTreasury",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "solventTreasuryDropletTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signerDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -306,9 +370,29 @@
           "name": "tokenProgram",
           "isMut": false,
           "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "swap",
+          "type": "bool"
+        }
+      ]
     },
     {
       "name": "lockNft",
@@ -384,17 +468,17 @@
           }
         },
         {
-          "name": "metadata",
+          "name": "nftMetadata",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -404,7 +488,7 @@
           "isSigner": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -526,17 +610,17 @@
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "destinationTokenAccount",
+          "name": "destinationNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -546,7 +630,7 @@
           "isSigner": false
         },
         {
-          "name": "solventTreasuryDropletAccount",
+          "name": "solventTreasuryDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -688,17 +772,17 @@
           "isSigner": false
         },
         {
-          "name": "solventTreasuryDropletAccount",
+          "name": "solventTreasuryDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": false,
           "isSigner": false
         },
@@ -990,12 +1074,12 @@
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "farmerTokenAccount",
+          "name": "farmerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1306,7 +1390,7 @@
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1761,7 +1845,7 @@
           "isSigner": false
         },
         {
-          "name": "signerDropletAccountOld",
+          "name": "signerDropletTokenAccountOld",
           "isMut": true,
           "isSigner": false
         },
@@ -1771,12 +1855,12 @@
           "isSigner": false
         },
         {
-          "name": "signerDropletAccountNew",
+          "name": "signerDropletTokenAccountNew",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "adminDropletAccount",
+          "name": "adminDropletTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1882,17 +1966,17 @@
           "isSigner": false
         },
         {
-          "name": "metadata",
+          "name": "nftMetadata",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solventTokenAccount",
+          "name": "solventNftTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -2113,6 +2197,30 @@
           }
         ]
       }
+    },
+    {
+      "name": "SwapState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "dropletMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "signer",
+            "type": "publicKey"
+          },
+          {
+            "name": "flag",
+            "type": "bool"
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -2243,12 +2351,12 @@
           "index": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2273,12 +2381,7 @@
           "index": false
         },
         {
-          "name": "signerDropletAccount",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "solventTreasury",
+          "name": "signerDropletTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2303,12 +2406,12 @@
           "index": false
         },
         {
-          "name": "signerTokenAccount",
+          "name": "signerNftTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationDropletAccount",
+          "name": "destinationDropletTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2328,12 +2431,12 @@
           "index": false
         },
         {
-          "name": "signerDropletAccountOld",
+          "name": "signerDropletTokenAccountOld",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "signerDropletAccountNew",
+          "name": "signerDropletTokenAccountNew",
           "type": "publicKey",
           "index": false
         }
@@ -2373,12 +2476,12 @@
           "index": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationTokenAccount",
+          "name": "destinationNftTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2483,17 +2586,12 @@
           "index": false
         },
         {
-          "name": "signerDropletAccount",
+          "name": "signerDropletTokenAccount",
           "type": "publicKey",
           "index": false
         },
         {
-          "name": "destinationTokenAccount",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "solventTreasury",
+          "name": "destinationNftTokenAccount",
           "type": "publicKey",
           "index": false
         }
@@ -2669,6 +2767,11 @@
       "code": 6016,
       "name": "StakingCooldownPending",
       "msg": "The staked NFT is in cooldown period, please wait and try again."
+    },
+    {
+      "code": 6017,
+      "name": "SwapNotAllowed",
+      "msg": "You cannot redeem NFT as part of a swap because you haven't deposited one yet."
     }
   ],
   "metadata": {

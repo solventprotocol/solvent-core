@@ -4,13 +4,8 @@ import {
   getAccount,
   getAssociatedTokenAddress,
 } from "@solana/spl-token-latest";
-import {
-  getSolventAuthority,
-  getTokenMetadata,
-  getSolvent,
-  getMerkleProof,
-} from "../../utils";
-import { getBucket } from "./get-bucket";
+import { SOLVENT_CORE_TREASURY } from "../../constants";
+import { getSolventAuthority, getTokenMetadata, getSolvent } from "../../utils";
 
 /**
  * Swap an NFT for another on in a bucket
@@ -18,19 +13,19 @@ import { getBucket } from "./get-bucket";
  * @param dropletMint Droplet mint associated with the bucket
  * @param nftToDepositMint Mint of the NFT to be deposited into the bucket
  * @param nftToRedeemMint Mint of the NFT to be redeemed from the bucket
+ * @param whitelistProof Merkle proof of the NFT to be deposited belonging to the collection whitelist, defaults to Solvent's collection database
  * @param nftToDepositTokenAccount Token account from which NFT will be deposited, defaults to the associated token account of wallet
  * @param nftToRedeemTokenAccount Token account to which the redeemed NFT is to be sent, defaults to the associated token account of wallet
- * @param whitelistProof Merkle proof of the NFT to be deposited belonging to the collection whitelist, defaults to Solvent's collection database
  * @returns Promise resolving to the transaction signature
  */
-export const swapNft = async (
+export const swapNfts = async (
   provider: anchor.AnchorProvider,
   dropletMint: anchor.web3.PublicKey,
   nftToDepositMint: anchor.web3.PublicKey,
   nftToRedeemMint: anchor.web3.PublicKey,
+  whitelistProof?: number[][],
   nftToDepositTokenAccount?: anchor.web3.PublicKey,
-  nftToRedeemTokenAccount?: anchor.web3.PublicKey,
-  whitelistProof?: number[][]
+  nftToRedeemTokenAccount?: anchor.web3.PublicKey
 ) => {
   const solvent = getSolvent(provider);
   const transaction = new anchor.web3.Transaction();
@@ -98,36 +93,43 @@ export const swapNft = async (
     );
   }
 
+  const solventTreasuryDropletTokenAccount = await getAssociatedTokenAddress(
+    dropletMint,
+    SOLVENT_CORE_TREASURY
+  );
+
   // whitelistProof is expected to be passed in case of v1 type of collection, can be null otherwise
   whitelistProof = whitelistProof ? whitelistProof : null;
 
-  // Deposit NFT
+  // Deposit NFT for swap
   transaction.add(
     await solvent.methods
-      .depositNft(whitelistProof)
+      .depositNft(true, whitelistProof)
       .accounts({
         signer: provider.wallet.publicKey,
         dropletMint,
         nftMint: nftToDepositMint,
-        metadata: nftToDeposiMetadata,
-        signerTokenAccount: nftToDepositTokenAccount,
-        solventTokenAccount: solventNftToDepositTokenAccount,
-        destinationDropletAccount: dropletTokenAccount,
+        nftMetadata: nftToDeposiMetadata,
+        signerNftTokenAccount: nftToDepositTokenAccount,
+        solventNftTokenAccount: solventNftToDepositTokenAccount,
+        destinationDropletTokenAccount: dropletTokenAccount,
       })
       .instruction()
   );
 
-  // Redeem NFT
+  // Redeem NFT for swap
   transaction.add(
     await solvent.methods
-      .redeemNft()
+      .redeemNft(true)
       .accounts({
         signer: provider.wallet.publicKey,
         dropletMint,
         nftMint: nftToRedeemMint,
-        solventTokenAccount: solventNftToRedeemTokenAccount,
-        destinationTokenAccount: nftToRedeemTokenAccount,
-        signerDropletAccount: dropletTokenAccount,
+        solventNftTokenAccount: solventNftToRedeemTokenAccount,
+        destinationNftTokenAccount: nftToRedeemTokenAccount,
+        signerDropletTokenAccount: dropletTokenAccount,
+        solventTreasury: SOLVENT_CORE_TREASURY,
+        solventTreasuryDropletTokenAccount,
       })
       .instruction()
   );

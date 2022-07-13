@@ -20,7 +20,7 @@ import {
   redeemNft,
   unlockNft,
   liquidateLocker,
-  swapNft,
+  swapNfts,
   updateLockingParams,
   setLockingEnabled,
   setStakingEnabled,
@@ -29,7 +29,7 @@ import {
   unstakeNft,
   claimBalance,
 } from "../src/actions";
-import { SOLVENT_TREASURY } from "../src/constants";
+import { SOLVENT_CORE_TREASURY } from "../src/constants";
 import {
   getFarmerAuthority,
   getMerkleProof,
@@ -195,19 +195,7 @@ describe("Solvent Core", function () {
 
       // Deposit NFT
       const whitelistProof = getMerkleProof([...mints, nftMint], nftMint);
-      try {
-        await depositNft(
-          provider,
-          dropletMint,
-          nftMint,
-          undefined,
-          undefined,
-          whitelistProof
-        );
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
+      await depositNft(provider, dropletMint, nftMint, whitelistProof);
     });
   });
 
@@ -223,9 +211,9 @@ describe("Solvent Core", function () {
       collectionMint,
     });
 
-    // Setup: mint an NFT from that collection
+    // Setup: mint 2 NFTs from that collection
     const nftCreator = await createKeypair(provider);
-    const nftMint = await mintNft(
+    const nftMint1 = await mintNft(
       provider,
       nftCreator,
       provider.wallet.publicKey,
@@ -233,16 +221,29 @@ describe("Solvent Core", function () {
     );
     await verifyCollection(
       provider,
-      nftMint,
+      nftMint1,
+      collectionMint,
+      collectionCreator
+    );
+    const nftMint2 = await mintNft(
+      provider,
+      nftCreator,
+      provider.wallet.publicKey,
+      collectionMint
+    );
+    await verifyCollection(
+      provider,
+      nftMint2,
       collectionMint,
       collectionCreator
     );
 
-    // Setup: deposit NFT
-    await depositNft(provider, dropletMint, nftMint);
+    // Setup: deposit 2 NFTs
+    await depositNft(provider, dropletMint, nftMint1);
+    await depositNft(provider, dropletMint, nftMint2);
 
     // Redeem NFT
-    await redeemNft(provider, dropletMint, nftMint);
+    await redeemNft(provider, dropletMint, nftMint1);
   });
 
   describe("can swap one NFT for another", () => {
@@ -289,7 +290,7 @@ describe("Solvent Core", function () {
         collectionCreator
       );
 
-      await swapNft(provider, dropletMint, nftMint2, nftMint1);
+      await swapNfts(provider, dropletMint, nftMint2, nftMint1);
     });
 
     it("for Metaplex v1.0 collections", async () => {
@@ -316,7 +317,7 @@ describe("Solvent Core", function () {
       );
 
       // Setup: Create bucket and deposit an NFT
-      const { root: whitelistRoot, tree } = getMerkleTree([
+      const { root: whitelistRoot } = getMerkleTree([
         ...mints,
         nftMint1,
         nftMint2,
@@ -330,18 +331,14 @@ describe("Solvent Core", function () {
         provider,
         dropletMint,
         nftMint1,
-        undefined,
-        undefined,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint1)
       );
 
-      await swapNft(
+      await swapNfts(
         provider,
         dropletMint,
         nftMint2,
         nftMint1,
-        undefined,
-        undefined,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint2)
       );
     });
@@ -401,12 +398,7 @@ describe("Solvent Core", function () {
         collectionCreator
       );
 
-      try {
-        await lockNft(provider, dropletMint, nftMint2, 100);
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
+      await lockNft(provider, dropletMint, nftMint2, 100);
     });
 
     it("for Metaplex v1.0 collections", async () => {
@@ -459,8 +451,6 @@ describe("Solvent Core", function () {
         provider,
         dropletMint,
         nftMint1,
-        undefined,
-        undefined,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint1)
       );
 
@@ -470,8 +460,6 @@ describe("Solvent Core", function () {
         dropletMint,
         nftMint2,
         100,
-        undefined,
-        undefined,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint2)
       );
     });
@@ -960,7 +948,7 @@ describe("Solvent Core", function () {
       solventAuthority
     );
     const initialSolventTreasuryBalance = await provider.connection.getBalance(
-      SOLVENT_TREASURY
+      SOLVENT_CORE_TREASURY
     );
 
     // Claim balance
@@ -971,7 +959,7 @@ describe("Solvent Core", function () {
       minRentExcemptAmount
     );
     expect(
-      (await provider.connection.getBalance(SOLVENT_TREASURY)) -
+      (await provider.connection.getBalance(SOLVENT_CORE_TREASURY)) -
         initialSolventTreasuryBalance
     ).to.equal(initialSolventAuthorityBalance - minRentExcemptAmount);
   });

@@ -1,5 +1,5 @@
 import * as anchor from "@project-serum/anchor";
-import { SOLVENT_TREASURY } from "../../constants";
+import { SOLVENT_CORE_TREASURY } from "../../constants";
 import { getSolvent } from "../../utils";
 
 /**
@@ -20,7 +20,7 @@ export const claimBalance = async (
       .claimBalance()
       .accounts({
         signer: provider.wallet.publicKey,
-        solventTreasury: SOLVENT_TREASURY,
+        solventTreasury: SOLVENT_CORE_TREASURY,
       })
       .instruction()
   );

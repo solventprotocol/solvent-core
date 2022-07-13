@@ -24,7 +24,7 @@ export const unstakeNft = async (
   const transaction = new anchor.web3.Transaction();
 
   const solventAuthority = await getSolventAuthority();
-  const solventTokenAccount = await getAssociatedTokenAddress(
+  const solventNftTokenAccount = await getAssociatedTokenAddress(
     nftMint,
     solventAuthority,
     true
@@ -63,7 +63,7 @@ export const unstakeNft = async (
         gemworksFarm,
         gemworksFeeAccount,
         nftMint,
-        solventTokenAccount,
+        solventNftTokenAccount,
         // @ts-ignore
         gemworksRewardAMint: farmAccount.rewardA.rewardMint,
         // @ts-ignore
