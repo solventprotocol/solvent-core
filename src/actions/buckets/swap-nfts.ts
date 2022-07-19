@@ -5,7 +5,12 @@ import {
   getAssociatedTokenAddress,
 } from "@solana/spl-token-latest";
 import { SOLVENT_CORE_TREASURY } from "../../constants";
-import { getSolventAuthority, getTokenMetadata, getSolvent } from "../../utils";
+import {
+  getSolventAuthority,
+  getTokenMetadata,
+  getSolvent,
+  getTokenAccountBalance,
+} from "../../utils";
 
 /**
  * Swap an NFT for another on in a bucket
@@ -16,7 +21,7 @@ import { getSolventAuthority, getTokenMetadata, getSolvent } from "../../utils";
  * @param whitelistProof Merkle proof of the NFT to be deposited belonging to the collection whitelist, defaults to Solvent's collection database
  * @param nftToDepositTokenAccount Token account from which NFT will be deposited, defaults to the associated token account of wallet
  * @param nftToRedeemTokenAccount Token account to which the redeemed NFT is to be sent, defaults to the associated token account of wallet
- * @returns Promise resolving to the transaction signature
+ * @returns Promise resolving to the list of transaction signatures
  */
 export const swapNfts = async (
   provider: anchor.AnchorProvider,
@@ -28,9 +33,9 @@ export const swapNfts = async (
   nftToRedeemTokenAccount?: anchor.web3.PublicKey
 ) => {
   const solvent = getSolvent(provider);
-  const transaction = new anchor.web3.Transaction();
+  const txSignatures = [];
 
-  const nftToDeposiMetadata = await getTokenMetadata(nftToDepositMint);
+  const createAccountsTx = new anchor.web3.Transaction();
 
   // Use wallet's ATA as the NFT token account if not passed as argument
   if (!nftToRedeemTokenAccount) {
@@ -42,7 +47,7 @@ export const swapNfts = async (
     try {
       await getAccount(provider.connection, nftToRedeemTokenAccount);
     } catch {
-      transaction.add(
+      createAccountsTx.add(
         createAssociatedTokenAccountInstruction(
           provider.wallet.publicKey,
           nftToRedeemTokenAccount,
@@ -83,7 +88,7 @@ export const swapNfts = async (
   try {
     await getAccount(provider.connection, dropletTokenAccount);
   } catch {
-    transaction.add(
+    createAccountsTx.add(
       createAssociatedTokenAccountInstruction(
         provider.wallet.publicKey,
         dropletTokenAccount,
@@ -98,12 +103,28 @@ export const swapNfts = async (
     SOLVENT_CORE_TREASURY
   );
 
-  // whitelistProof is expected to be passed in case of v1 type of collection, can be null otherwise
-  whitelistProof = whitelistProof ? whitelistProof : null;
+  // Create token accounts if necessary
+  if (createAccountsTx.instructions.length > 0) {
+    const sig = await provider.sendAndConfirm(createAccountsTx);
+    txSignatures.push(sig);
+  }
 
-  // Deposit NFT for swap
-  transaction.add(
-    await solvent.methods
+  if (
+    (await getTokenAccountBalance(
+      provider.connection,
+      nftToDepositTokenAccount
+    )) === BigInt(1) &&
+    (await getTokenAccountBalance(
+      provider.connection,
+      solventNftToDepositTokenAccount
+    )) === BigInt(0)
+  ) {
+    // whitelistProof is expected to be passed in case of v1 type of collection, can be null otherwise
+    whitelistProof = whitelistProof ? whitelistProof : null;
+    const nftToDeposiMetadata = await getTokenMetadata(nftToDepositMint);
+
+    // Deposit NFT for swap
+    const sig = await solvent.methods
       .depositNft(true, whitelistProof)
       .accounts({
         signer: provider.wallet.publicKey,
@@ -114,12 +135,23 @@ export const swapNfts = async (
         solventNftTokenAccount: solventNftToDepositTokenAccount,
         destinationDropletTokenAccount: dropletTokenAccount,
       })
-      .instruction()
-  );
+      .rpc();
 
-  // Redeem NFT for swap
-  transaction.add(
-    await solvent.methods
+    txSignatures.push(sig);
+  }
+
+  if (
+    (await getTokenAccountBalance(
+      provider.connection,
+      nftToRedeemTokenAccount
+    )) === BigInt(0) &&
+    (await getTokenAccountBalance(
+      provider.connection,
+      solventNftToRedeemTokenAccount
+    )) === BigInt(1)
+  ) {
+    // Redeem NFT for swap
+    const sig = await solvent.methods
       .redeemNft(true)
       .accounts({
         signer: provider.wallet.publicKey,
@@ -131,9 +163,11 @@ export const swapNfts = async (
         solventTreasury: SOLVENT_CORE_TREASURY,
         solventTreasuryDropletTokenAccount,
       })
-      .instruction()
-  );
+      .rpc();
 
-  // Send the transaction
-  return await provider.sendAndConfirm(transaction);
+    txSignatures.push(sig);
+  }
+
+  // Return the transaction signatures
+  return txSignatures;
 };

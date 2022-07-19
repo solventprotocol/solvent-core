@@ -47,3 +47,14 @@ export const getMerkleProof = (
   const proof: Buffer[] = tree.getProof(leaf).map((x) => x.data);
   return proof.map((x) => [...x]);
 };
+
+export const getTokenAccountBalance = async (
+  connection: anchor.web3.Connection,
+  tokenAccount: anchor.web3.PublicKey
+) => {
+  let tokenAccountBalance = BigInt(0);
+  try {
+    tokenAccountBalance = (await getAccount(connection, tokenAccount)).amount;
+  } catch (error) {}
+  return tokenAccountBalance;
+};
