@@ -208,7 +208,10 @@ export const swapNfts = async (
   }
 
   // Send transactions
+  const txSigs = [];
   for (const tx of consolidatedTxs) {
-    provider.sendAndConfirm(tx);
+    const sig = await provider.sendAndConfirm(tx);
+    txSigs.push(sig);
   }
+  return txSigs;
 };
