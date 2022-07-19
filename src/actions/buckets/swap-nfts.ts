@@ -33,7 +33,10 @@ export const swapNfts = async (
   nftToRedeemTokenAccount?: anchor.web3.PublicKey
 ) => {
   const solvent = getSolvent(provider);
-  const txSignatures = [];
+  const transactions: Record<
+    "createAccounts" | "depositNft" | "redeemNft",
+    anchor.web3.Transaction | null
+  > = { createAccounts: null, depositNft: null, redeemNft: null };
 
   const createAccountsTx = new anchor.web3.Transaction();
 
@@ -105,8 +108,7 @@ export const swapNfts = async (
 
   // Create token accounts if necessary
   if (createAccountsTx.instructions.length > 0) {
-    const sig = await provider.sendAndConfirm(createAccountsTx);
-    txSignatures.push(sig);
+    transactions["createAccounts"] = createAccountsTx;
   }
 
   if (
@@ -123,21 +125,25 @@ export const swapNfts = async (
     whitelistProof = whitelistProof ? whitelistProof : null;
     const nftToDeposiMetadata = await getTokenMetadata(nftToDepositMint);
 
-    // Deposit NFT for swap
-    const sig = await solvent.methods
-      .depositNft(true, whitelistProof)
-      .accounts({
-        signer: provider.wallet.publicKey,
-        dropletMint,
-        nftMint: nftToDepositMint,
-        nftMetadata: nftToDeposiMetadata,
-        signerNftTokenAccount: nftToDepositTokenAccount,
-        solventNftTokenAccount: solventNftToDepositTokenAccount,
-        destinationDropletTokenAccount: dropletTokenAccount,
-      })
-      .rpc();
+    const depositNftTx = new anchor.web3.Transaction();
 
-    txSignatures.push(sig);
+    // Deposit NFT for swap
+    depositNftTx.add(
+      await solvent.methods
+        .depositNft(true, whitelistProof)
+        .accounts({
+          signer: provider.wallet.publicKey,
+          dropletMint,
+          nftMint: nftToDepositMint,
+          nftMetadata: nftToDeposiMetadata,
+          signerNftTokenAccount: nftToDepositTokenAccount,
+          solventNftTokenAccount: solventNftToDepositTokenAccount,
+          destinationDropletTokenAccount: dropletTokenAccount,
+        })
+        .instruction()
+    );
+
+    transactions["depositNft"] = depositNftTx;
   }
 
   if (
@@ -150,24 +156,59 @@ export const swapNfts = async (
       solventNftToRedeemTokenAccount
     )) === BigInt(1)
   ) {
-    // Redeem NFT for swap
-    const sig = await solvent.methods
-      .redeemNft(true)
-      .accounts({
-        signer: provider.wallet.publicKey,
-        dropletMint,
-        nftMint: nftToRedeemMint,
-        solventNftTokenAccount: solventNftToRedeemTokenAccount,
-        destinationNftTokenAccount: nftToRedeemTokenAccount,
-        signerDropletTokenAccount: dropletTokenAccount,
-        solventTreasury: SOLVENT_CORE_TREASURY,
-        solventTreasuryDropletTokenAccount,
-      })
-      .rpc();
+    const redeemNftTx = new anchor.web3.Transaction();
 
-    txSignatures.push(sig);
+    // Redeem NFT for swap
+    redeemNftTx.add(
+      await solvent.methods
+        .redeemNft(true)
+        .accounts({
+          signer: provider.wallet.publicKey,
+          dropletMint,
+          nftMint: nftToRedeemMint,
+          solventNftTokenAccount: solventNftToRedeemTokenAccount,
+          destinationNftTokenAccount: nftToRedeemTokenAccount,
+          signerDropletTokenAccount: dropletTokenAccount,
+          solventTreasury: SOLVENT_CORE_TREASURY,
+          solventTreasuryDropletTokenAccount,
+        })
+        .instruction()
+    );
+
+    transactions["redeemNft"] = redeemNftTx;
   }
 
-  // Return the transaction signatures
-  return txSignatures;
+  const consolidatedTxs: anchor.web3.Transaction[] = [];
+
+  if (transactions.depositNft && transactions.redeemNft) {
+    if (transactions.createAccounts) {
+      consolidatedTxs.push(
+        transactions.createAccounts.add(transactions.depositNft)
+      );
+    } else {
+      consolidatedTxs.push(transactions.depositNft);
+    }
+    consolidatedTxs.push(transactions.depositNft);
+  } else if (transactions.depositNft) {
+    if (transactions.createAccounts) {
+      consolidatedTxs.push(
+        transactions.createAccounts.add(transactions.depositNft)
+      );
+    } else {
+      consolidatedTxs.push(transactions.depositNft);
+    }
+  } else if (transactions.redeemNft) {
+    if (transactions.createAccounts) {
+      consolidatedTxs.push(
+        transactions.createAccounts.add(transactions.redeemNft)
+      );
+    } else {
+      consolidatedTxs.push(transactions.redeemNft);
+    }
+  }
+
+  // Send transactions
+  for (const tx of consolidatedTxs) {
+    provider.sendAndConfirm(tx);
+  }
 };
