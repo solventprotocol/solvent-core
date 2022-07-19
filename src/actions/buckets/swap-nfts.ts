@@ -188,7 +188,7 @@ export const swapNfts = async (
     } else {
       consolidatedTxs.push(transactions.depositNft);
     }
-    consolidatedTxs.push(transactions.depositNft);
+    consolidatedTxs.push(transactions.redeemNft);
   } else if (transactions.depositNft) {
     if (transactions.createAccounts) {
       consolidatedTxs.push(
