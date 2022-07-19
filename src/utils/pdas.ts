@@ -6,6 +6,7 @@ import {
   LOCKER_SEED,
   SOLVENT_PROGRAM_ID,
   FARMER_AUTHORITY_SEED,
+  SWAP_SEED,
 } from "../constants";
 import { PROGRAM_ID as METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 
@@ -46,6 +47,17 @@ export const getDepositState = async (
   );
   return depositState;
 };
+
+export const getSwapState = async (
+  dropletMint: anchor.web3.PublicKey,
+  signer: anchor.web3.PublicKey
+) => {
+  const [swapState] = await anchor.web3.PublicKey.findProgramAddress(
+    [dropletMint.toBuffer(), signer.toBuffer(), SWAP_SEED],
+    SOLVENT_PROGRAM_ID
+  );
+  return swapState;
+}
 
 export const getTokenMetadata = async (tokenMint: anchor.web3.PublicKey) => {
   const [tokenMetadataAddress] = await anchor.web3.PublicKey.findProgramAddress(
