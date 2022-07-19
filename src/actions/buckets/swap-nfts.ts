@@ -5,7 +5,12 @@ import {
   getAssociatedTokenAddress,
 } from "@solana/spl-token-latest";
 import { SOLVENT_CORE_TREASURY } from "../../constants";
-import { getSolventAuthority, getTokenMetadata, getSolvent } from "../../utils";
+import {
+  getSolventAuthority,
+  getTokenMetadata,
+  getSolvent,
+  getTokenAccountBalance,
+} from "../../utils";
 
 /**
  * Swap an NFT for another on in a bucket
@@ -104,17 +109,15 @@ export const swapNfts = async (
     txSignatures.push(sig);
   }
 
-  const nftToDepositBalance = await provider.connection.getTokenAccountBalance(
-    nftToDepositTokenAccount
-  );
-  const solventNftToDepositBalance =
-    await provider.connection.getTokenAccountBalance(
-      solventNftToDepositTokenAccount
-    );
-
   if (
-    parseInt(nftToDepositBalance.value.amount) === 0 &&
-    parseInt(solventNftToDepositBalance.value.amount) === 1
+    (await getTokenAccountBalance(
+      provider.connection,
+      nftToDepositTokenAccount
+    )) === BigInt(1) &&
+    (await getTokenAccountBalance(
+      provider.connection,
+      solventNftToDepositTokenAccount
+    )) === BigInt(0)
   ) {
     // whitelistProof is expected to be passed in case of v1 type of collection, can be null otherwise
     whitelistProof = whitelistProof ? whitelistProof : null;
@@ -137,17 +140,15 @@ export const swapNfts = async (
     txSignatures.push(sig);
   }
 
-  const nftToRedeemBalance = await provider.connection.getTokenAccountBalance(
-    nftToDepositTokenAccount
-  );
-  const solventNftToRedeemBalance =
-    await provider.connection.getTokenAccountBalance(
-      solventNftToDepositTokenAccount
-    );
-
   if (
-    parseInt(nftToRedeemBalance.value.amount) === 0 &&
-    parseInt(solventNftToRedeemBalance.value.amount) === 1
+    (await getTokenAccountBalance(
+      provider.connection,
+      nftToRedeemTokenAccount
+    )) === BigInt(0) &&
+    (await getTokenAccountBalance(
+      provider.connection,
+      solventNftToRedeemTokenAccount
+    )) === BigInt(1)
   ) {
     // Redeem NFT for swap
     const sig = await solvent.methods

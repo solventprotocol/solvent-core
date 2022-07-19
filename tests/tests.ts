@@ -291,7 +291,7 @@ describe("Solvent Core", function () {
       );
 
       const txSigs = await swapNfts(provider, dropletMint, nftMint2, nftMint1);
-      expect(txSigs.length).to.equal(3);
+      expect(txSigs.length).to.equal(2);
     });
 
     it("for Metaplex v1.0 collections", async () => {
@@ -342,7 +342,7 @@ describe("Solvent Core", function () {
         nftMint1,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint2)
       );
-      expect(txSigs.length).to.equal(3);
+      expect(txSigs.length).to.equal(2);
     });
   });
 
