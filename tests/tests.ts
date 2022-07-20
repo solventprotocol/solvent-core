@@ -290,7 +290,7 @@ describe("Solvent Core", function () {
         collectionCreator
       );
 
-      const txSigs = await swapNfts(provider, dropletMint, nftMint2, nftMint1);
+      const txSigs = await swapNfts(provider, dropletMint, nftMint1, nftMint2);
       expect(txSigs.length).to.equal(2);
     });
 
@@ -338,8 +338,8 @@ describe("Solvent Core", function () {
       const txSigs = await swapNfts(
         provider,
         dropletMint,
-        nftMint2,
         nftMint1,
+        nftMint2,
         getMerkleProof([...mints, nftMint1, nftMint2], nftMint2)
       );
       expect(txSigs.length).to.equal(2);

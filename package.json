@@ -1,6 +1,6 @@
 {
   "name": "@solventprotocol/solvent-core",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "instantly buy or sell solana nfts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
