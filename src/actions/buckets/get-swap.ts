@@ -35,7 +35,7 @@ export const getAllSwaps = async (
     return await solvent.account.swapState.all([
       {
         memcmp: {
-          offset: 9,
+          offset: 41,
           bytes: signer.toBase58(),
         },
       },
