@@ -12,8 +12,8 @@ import { getSwap } from "./get-swap";
  * Swap an NFT for another on in a bucket
  * @param provider Anchor provider
  * @param dropletMint Droplet mint associated with the bucket
- * @param nftToDepositMint Mint of the NFT to be deposited into the bucket
  * @param nftToRedeemMint Mint of the NFT to be redeemed from the bucket
+ * @param nftToDepositMint Mint of the NFT to be deposited into the bucket
  * @param whitelistProof Merkle proof of the NFT to be deposited belonging to the collection whitelist, defaults to Solvent's collection database
  * @param nftToDepositTokenAccount Token account from which NFT will be deposited, defaults to the associated token account of wallet
  * @param nftToRedeemTokenAccount Token account to which the redeemed NFT is to be sent, defaults to the associated token account of wallet
