@@ -20,6 +20,7 @@ export const redeemNft = async (
   provider: anchor.AnchorProvider,
   dropletMint: anchor.web3.PublicKey,
   nftMint: anchor.web3.PublicKey,
+  isSwap: boolean = false,
   nftTokenAccount?: anchor.web3.PublicKey,
   dropletTokenAccount?: anchor.web3.PublicKey
 ) => {
@@ -70,7 +71,7 @@ export const redeemNft = async (
   // Redeem NFT and burn droplets in the process
   transaction.add(
     await solvent.methods
-      .redeemNft(false)
+      .redeemNft(isSwap)
       .accounts({
         signer: provider.wallet.publicKey,
         dropletMint,

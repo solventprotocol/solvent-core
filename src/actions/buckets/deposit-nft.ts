@@ -11,7 +11,8 @@ import { getSolventAuthority, getTokenMetadata, getSolvent } from "../../utils";
  * @param provider Anchor provider
  * @param dropletMint Droplet mint associated with the bucket
  * @param nftMint Mint of the NFT to be deposited into the bucket
- * @param whitelistProof Merkle proof of the NFT belonging to the collection whitelist, defaults to Solvent's collection database
+ * @param whitelistProof Merkle proof of the NFT belonging to the collection whitelist, needed if NFT does not have on-chain collection
+ * @param isSwap Mint of the NFT to be deposited into the bucket
  * @param nftTokenAccount Token account holding the NFT to be deposited, defaults to the associated token account of wallet
  * @param dropletTokenAccount Token account to which droplets would be minted, defaults to the associated token account of wallet
  * @returns Promise resolving to the transaction signature
@@ -20,7 +21,8 @@ export const depositNft = async (
   provider: anchor.AnchorProvider,
   dropletMint: anchor.web3.PublicKey,
   nftMint: anchor.web3.PublicKey,
-  whitelistProof?: number[][],
+  whitelistProof: number[][] | null = null,
+  isSwap: boolean = false,
   nftTokenAccount?: anchor.web3.PublicKey,
   dropletTokenAccount?: anchor.web3.PublicKey
 ) => {
@@ -65,13 +67,10 @@ export const depositNft = async (
     }
   }
 
-  // whitelistProof is expected to be passed in case of v1 type of collection, can be null otherwise
-  whitelistProof = whitelistProof ? whitelistProof : null;
-
   // Deposit NFT into Solvent
   transaction.add(
     await solvent.methods
-      .depositNft(false, whitelistProof)
+      .depositNft(isSwap, whitelistProof)
       .accounts({
         signer: provider.wallet.publicKey,
         dropletMint,
