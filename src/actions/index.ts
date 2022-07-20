@@ -2,6 +2,7 @@ export * from "./buckets/create-bucket";
 export * from "./buckets/deposit-nft";
 export * from "./buckets/get-bucket";
 export * from "./buckets/get-deposit";
+export * from "./buckets/get-swap";
 export * from "./buckets/redeem-nft";
 export * from "./buckets/swap-nfts";
 
